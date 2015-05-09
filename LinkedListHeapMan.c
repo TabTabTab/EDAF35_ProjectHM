@@ -98,7 +98,7 @@ node_t* get_avail(size_t size)
 		if(temp->is_free && (temp->size) >= size){
 			return temp;
 		}
-		node_t** last=&(temp->next);
+		last=&(temp->next);
 		temp=temp->next;
 	}
 
