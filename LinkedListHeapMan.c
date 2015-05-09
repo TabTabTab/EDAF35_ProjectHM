@@ -49,6 +49,10 @@ void* calloc(size_t nitems, size_t elem_size)
 void* malloc(size_t size)
 {
 	printf("calling custom malloc\n");
+	if(size<=0){
+		return NULL;	
+	}
+
 	node_t* node=get_avail(size);
 
 	if(node==NULL){
