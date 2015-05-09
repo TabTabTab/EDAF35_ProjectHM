@@ -1,10 +1,11 @@
+#define _BSD_SOURCE
+
 #include <stddef.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include <unistd.h>
-
-
 
 
 typedef struct node_t node_t;
@@ -66,14 +67,18 @@ node_t* get_avail(size_t size)
 }
 
 node_t* create_block(size_t size,node_t** last)
-{
+{	
+	//varför måste man göra detta?
 	node_t* new_node=sbrk(0);
 
 	void* request = sbrk(block_node_size+size);
 	if (request==SBRK_FAIL){
 		return NULL;
 	}
-	memset(request,0,block_node_size+size);
+	memset(request,0,block_node_size);
+	new_node->next=NULL;
+	new_node->size=size;
+	new_node->is_free=true;
 	*last=new_node;
 	return new_node;
 }

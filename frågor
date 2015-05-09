@@ -1,0 +1,8 @@
+1)varför sbrk(0)?
+
+2) varför klagar den på att det inte är en void pekare från sbrk? det är det väl?
+
+3) varför säger den att vi inte har hämtat sbrk?
+
+
+// nevermind man behövde ha en define i toppen
