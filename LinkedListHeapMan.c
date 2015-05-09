@@ -29,7 +29,7 @@ node_t* create_block(size_t size,node_t** last);
 
 node_t* get_node(void* ptr);
 
-static const size_t block_node_size=512;
+static const size_t block_node_size=sizeof(node_t);
 
 static const void* SBRK_FAIL=(void*) -1;
 static node_t* block_head=NULL;
@@ -110,12 +110,10 @@ node_t* create_block(size_t size,node_t** last)
 {	
 	//varför måste man göra detta?
 	node_t* new_node=sbrk(0);
-	void* test=sbrk(0);
 	void* request = sbrk(block_node_size+size);
 	if (request==SBRK_FAIL){
 		return NULL;
 	}
-	memset(request,0,block_node_size);
 	new_node->next=NULL;
 	new_node->size=size;
 	new_node->is_free=true;
