@@ -1,10 +1,13 @@
+#define _BSD_SOURCE
+
+
 #include <stddef.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
-
-
+#include <string.h>
+#include <stdlib.h>
 
 
 typedef struct node_t node_t;
@@ -68,7 +71,7 @@ node_t* get_avail(size_t size)
 node_t* create_block(size_t size,node_t** last)
 {
 	node_t* new_node=sbrk(0);
-
+	void* test=sbrk(0);
 	void* request = sbrk(block_node_size+size);
 	if (request==SBRK_FAIL){
 		return NULL;
@@ -82,7 +85,15 @@ node_t* create_block(size_t size,node_t** last)
 
 void free(void* ptr)
 {
-
+	printf("calling custom free\n");
+	node_t* node=get_prt_node(ptr);
+	if(node == NULL){
+		fprintf(stderr,"trying to free unallocated memory\n");
+		exit(1);
+	}
+	else{
+		node->is_free=true;
+	}
 }
 
 node_t* get_prt_node(void* ptr)
@@ -94,7 +105,6 @@ node_t* get_prt_node(void* ptr)
 			return temp;
 		}
 	}
-
 	return NULL;
 }
 
@@ -102,12 +112,8 @@ node_t* get_prt_node(void* ptr)
 
 int main()
 {
-
 	printf("\n==================\nwe are running..\n==================\n\n");
 	void* mem=malloc(10);
 	void* mem2=malloc(10);
-	printf("mem: %d\n",mem);
-	printf("mem2: %d\n",mem2);
-
-	
+	free(mem2);
 }
