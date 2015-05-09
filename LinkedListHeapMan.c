@@ -18,7 +18,9 @@ struct node_t{
 	bool is_free;
 };
 
+void* realloc(void *ptr, size_t size);
 void* malloc(size_t size); 
+void* calloc(size_t nitems, size_t size); 
 void free(void* ptr); 
 
 
@@ -32,6 +34,17 @@ static const size_t block_node_size=512;
 static const void* SBRK_FAIL=(void*) -1;
 static node_t* block_head=NULL;
 
+void* calloc(size_t nitems, size_t elem_size)
+{
+	printf("calling custom calloc\n");
+	size_t size=nitems*elem_size;
+	void* ptr=malloc(size);
+	if(ptr==NULL){
+		return NULL;
+	}
+	memset(ptr,0,size);
+	return ptr;
+}
 
 void* malloc(size_t size)
 {
@@ -44,6 +57,31 @@ void* malloc(size_t size)
 	node->is_free=false;	
 	//node+1 in order to evade returning the node itself, node+1 will return a ptr to the actual data block
 	return node+1;
+}
+
+void *realloc(void *ptr, size_t size) {
+	printf("calling custom realloc\n");
+  if (!ptr) {
+    // NULL ptr. realloc should act like malloc.
+    return malloc(size);
+  }
+
+  struct node_t* block_ptr = get_node(ptr);
+  if (block_ptr->size >= size) {
+    // We have enough space. Could free some once we implement split.
+    return ptr;
+  }
+
+  // Need to really realloc. Malloc new space and free old space.
+  // Then copy old data to new space.
+  void *new_ptr;
+  new_ptr = malloc(size);
+  if (!new_ptr) {
+    return NULL; // TODO: set errno on failure.
+  }
+  memcpy(new_ptr, ptr, block_ptr->size);
+  free(ptr);
+  return new_ptr;
 }
 
 /*
@@ -104,6 +142,7 @@ node_t* get_node(void* ptr)
 	return node;
 }
 
+/*
 int main()
 {
 	printf("\n==================\nwe are running..\n==================\n\n");
@@ -113,3 +152,4 @@ int main()
 	printf("mem2: %d\n",mem2);
 	free(mem2);
 }
+*/
