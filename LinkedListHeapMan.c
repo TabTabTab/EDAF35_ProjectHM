@@ -21,13 +21,17 @@ void free(void* ptr);
 
 node_t* get_avail(size_t size);
 node_t* create_block(size_t size,node_t** last);
+
+node_t* get_prt_node(void* ptr);
+
 static const size_t block_node_size=512;
 
-static const void* failed_sbrk=(void*) -1;
-static node_t* free_head=NULL;
+static const void* SBRK_FAIL=(void*) -1;
+static node_t* block_head=NULL;
 
 
-void* malloc(size_t size){
+void* malloc(size_t size)
+{
 	printf("calling custom malloc\n");
 	node_t* node=get_avail(size);
 
@@ -45,10 +49,10 @@ Returns null if failure
 node_t* get_avail(size_t size)
 {
 	//first try to find a usable block
-	node_t* temp=free_head;
+	node_t* temp=block_head;
 
 	//we need to keep track of last so that we can add to the last element later on
-	node_t** last=&free_head;
+	node_t** last=&block_head;
 	while(temp!=NULL){
 		if(temp->is_free && (temp->size) >= size){
 			return temp;
@@ -66,7 +70,7 @@ node_t* create_block(size_t size,node_t** last)
 	node_t* new_node=sbrk(0);
 
 	void* request = sbrk(block_node_size+size);
-	if (request==failed_sbrk){
+	if (request==SBRK_FAIL){
 		return NULL;
 	}
 	memset(request,0,block_node_size+size);
@@ -75,8 +79,30 @@ node_t* create_block(size_t size,node_t** last)
 }
 
 
+
+void free(void* ptr)
+{
+
+}
+
+node_t* get_prt_node(void* ptr)
+{
+	node_t* temp=block_head;
+	while(temp!=NULL){
+		void* potential=(void*)temp+1;
+		if(potential==ptr){
+			return temp;
+		}
+	}
+
+	return NULL;
+}
+
+
+
 int main()
 {
+
 	printf("\n==================\nwe are running..\n==================\n\n");
 	void* mem=malloc(10);
 	void* mem2=malloc(10);
