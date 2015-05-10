@@ -10,8 +10,8 @@
 
 
 //K=10 will result in the total size of 1024 bytes
-#define K (10)
-#define N (1<<K)
+#define N (24)
+#define POOL_SIZE (16*1024*1024)
 
 
 typedef struct block_t block_t;
@@ -26,8 +26,8 @@ struct block_t{
 
 
 
-static block_t** free_list;
-static char memory[N];
+static block_t* free_list[K];
+static char memory[POOL_SIZE];
 
 
 
@@ -39,12 +39,34 @@ void free(void* ptr);
 size_t upper_bound(size_t size);
 size_t two_pot(size_t size);
 
+block_t* find_free_block(size_t size);
+block_t* shrink_block(size_t req_size);
 
 void* malloc(size_t size)
 {
 
 
 }
+
+block_t* find_free_block(size_t size)
+{
+	size_t index=two_pot(size);
+	block_t* block=NULL;
+	while(index<K){
+		if(free_list[index]!=NULL){
+			//return shrink_block(block_t* block,size_t index);
+		}
+	}
+}
+
+block_t* shrink_block(block_t* block,size_t req_k_val)
+{
+	block_t* remaining_block=block;
+	while(remaining_block-> N  >req_size){
+
+	}
+}
+
 
 size_t two_pot(size_t value)
 {
