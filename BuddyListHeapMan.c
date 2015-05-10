@@ -1,14 +1,4 @@
 #define _BSD_SOURCE
-
-#include <stddef.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#define _BSD_SOURCE
-
 #include <stddef.h>
 #include <errno.h>
 #include <stdio.h>
