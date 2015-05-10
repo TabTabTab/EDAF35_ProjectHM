@@ -65,6 +65,10 @@ void* malloc(size_t size)
 
 void *realloc(void *ptr, size_t size) {
 	printf("calling custom realloc\n");
+	if(size==0){
+  	free(ptr);
+	return;
+  }
   if (!ptr) {
     // NULL ptr. realloc should act like malloc.
     return malloc(size);
