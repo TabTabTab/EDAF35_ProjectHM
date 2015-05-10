@@ -1,8 +1,5 @@
 #define _BSD_SOURCE
-<<<<<<< HEAD
 
-=======
->>>>>>> 62ad9cbc7f1346d2c7da3d93b3e51622cd3b46cf
 #include <stddef.h>
 #include <errno.h>
 #include <stdio.h>
@@ -72,7 +69,6 @@ size_t two_pot(size_t value)
 }
 
 
-
 size_t upper_bound(size_t value)
 {
 	size_t two_res=two_pot(value);
@@ -80,11 +76,10 @@ size_t upper_bound(size_t value)
 }
 
 
-
 int main()
 {
 	printf("doing nothing..\n");
-	size_t n=1;
+	size_t n=128;
 	printf("%d\n",two_pot(n));
 	printf("%d\n",upper_bound(n));
 }
