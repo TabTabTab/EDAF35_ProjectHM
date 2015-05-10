@@ -26,7 +26,7 @@ struct block_t{
 
 
 
-static block_t* free_list[K];
+static block_t** free_list;
 static char memory[N];
 
 
@@ -36,10 +36,52 @@ void* malloc(size_t size);
 void* calloc(size_t nitems, size_t size); 
 void free(void* ptr);
 
+size_t upper_bound(size_t size);
+size_t two_pot(size_t size);
+
+
+void* malloc(size_t size)
+{
+
+
+}
+
+size_t two_pot(size_t value)
+{
+	size_t one=0x1;
+	
+	size_t nbr_bits=0;
+	size_t nbr_ones=0;
+
+	while(value>0){
+		nbr_bits++;
+		if(value & one == one){
+			nbr_ones++;
+		}
+		value=value>>1;
+	}
+
+	if(nbr_ones>1){
+		return nbr_bits;
+	}else{
+		return nbr_bits-1;
+	}
+}
+
+
+
+size_t upper_bound(size_t value)
+{
+	size_t two_res=two_pot(value);
+	return 1<<(two_res);
+}
 
 
 
 int main()
 {
-	printf("starting\n");
+	printf("doing nothing..\n");
+	size_t n=1;
+	printf("%d\n",two_pot(n));
+	printf("%d\n",upper_bound(n));
 }
