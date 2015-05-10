@@ -129,10 +129,10 @@ node_t* create_block(size_t size,node_t** last)
 
 void free(void* ptr)
 {
+	printf("calling custom free\n");
 	if(ptr==NULL){
 		return;
 	}
-	printf("calling custom free\n");
 	node_t* node=get_node(ptr);
 	node->is_free=true;
 }
