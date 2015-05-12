@@ -66,8 +66,8 @@ void* malloc(size_t size)
 void *realloc(void *ptr, size_t size) {
 	printf("calling custom realloc\n");
 	if(size==0){
-  	free(ptr);
-	return;
+  		free(ptr);
+		return;
   }
   if (!ptr) {
     // NULL ptr. realloc should act like malloc.
@@ -76,16 +76,15 @@ void *realloc(void *ptr, size_t size) {
 
   struct node_t* block_ptr = get_node(ptr);
   if (block_ptr->size >= size) {
-    // We have enough space. Could free some once we implement split.
+    
     return ptr;
   }
 
-  // Need to really realloc. Malloc new space and free old space.
-  // Then copy old data to new space.
+
   void *new_ptr;
   new_ptr = malloc(size);
   if (!new_ptr) {
-    return NULL; // TODO: set errno on failure.
+    return NULL; 
   }
   memcpy(new_ptr, ptr, block_ptr->size);
   free(ptr);
@@ -148,14 +147,4 @@ node_t* get_node(void* ptr)
 	return node;
 }
 
-/*
-int main()
-{
-	printf("\n==================\nwe are running..\n==================\n\n");
-	void* mem=malloc(10);
-	void* mem2=malloc(10);
-	printf("mem: %d\n",mem);
-	printf("mem2: %d\n",mem2);
-	free(mem2);
-}
-*/
+
