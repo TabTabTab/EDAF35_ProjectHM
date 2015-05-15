@@ -15,6 +15,7 @@ typedef struct node_t node_t;
 struct node_t{
 	size_t size;
 	node_t* next;
+	node_t* prev;
 	bool is_free;
 };
 
@@ -22,10 +23,11 @@ void* realloc(void *ptr, size_t size);
 void* malloc(size_t size); 
 void* calloc(size_t nitems, size_t size); 
 void free(void* ptr); 
-
+void merge(node_t* node);
+bool are_neighbours(node_t* potential_left, node_t* potential_right);
 
 node_t* get_avail(size_t size);
-node_t* create_block(size_t size,node_t** last);
+node_t* create_block(size_t size);
 
 node_t* get_node(void* ptr);
 
@@ -100,20 +102,20 @@ node_t* get_avail(size_t size)
 	node_t* temp=block_head;
 
 	//we need to keep track of last so that we can add to the last element later on
-	node_t** last=&block_head;
+//	node_t** last=&block_head;
 	while(temp!=NULL){
 		if(temp->is_free && (temp->size) >= size){
 			return temp;
 		}
-		last=&(temp->next);
+//		last=&(temp->next);
 		temp=temp->next;
 	}
 
-	node_t* new_block=create_block(size,last);
+	node_t* new_block=create_block(size);
 	return new_block;
 }
 
-node_t* create_block(size_t size,node_t** last)
+node_t* create_block(size_t size)
 {	
 	//varför måste man göra detta?
 	node_t* new_node=sbrk(0);
@@ -121,12 +123,37 @@ node_t* create_block(size_t size,node_t** last)
 	if (request==SBRK_FAIL){
 		return NULL;
 	}
+		new_node->is_free=true;		
+		new_node->size=size;
+		new_node->prev=NULL;
+	if(block_head==NULL){
+		new_node->next=NULL;
+	}
+	else{
+		new_node->next=block_head;
+		block_head->prev=new_node;
+	}
+	block_head=new_node;
+	
+	return new_node;
+}
+/*
+node_t* create_block2(size_t size,node_t** last)
+{	
+	//varför måste man göra detta?
+	node_t* new_node=sbrk(0);
+	void* request = sbrk(block_node_size+size);
+	if (request==SBRK_FAIL){
+		return NULL;
+	}
+	//new_node->prev =*last;
 	new_node->next=NULL;
 	new_node->size=size;
 	new_node->is_free=true;
 	*last=new_node;
 	return new_node;
 }
+*/
 
 
 
@@ -138,6 +165,30 @@ void free(void* ptr)
 	}
 	node_t* node=get_node(ptr);
 	node->is_free=true;
+	merge(node);
+}
+
+void merge(node_t* node){
+	if(node->next!=NULL && node->next->is_free && are_neighbours(node,node->next)){
+		node->size = node->size + block_node_size + node->next->size;
+		node->next=node->next->next;
+	}
+	if(node->prev!=NULL && node->prev->is_free && are_neighbours(node->prev,node)){
+		node->prev->size = node->prev->size + block_node_size + node->size;
+		node->prev->next=node->next;
+	}
+
+}
+
+bool are_neighbours(node_t* potential_left, node_t* potential_right)
+{
+	char* byte_ptr=(char*)potential_left;
+	node_t* right=(node_t*)(byte_ptr + block_node_size + potential_left->size);
+	if(right==potential_right){
+		return true;
+	}else{
+		return false;
+	}
 }
 
 node_t* get_node(void* ptr)

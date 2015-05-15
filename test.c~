@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
-#include "LinkedListHeapMan.c"
+#include "BuddyListHeapMan.c"
 
 #define	ARRAY_SIZE	10
 
